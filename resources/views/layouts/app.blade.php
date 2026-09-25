@@ -32,6 +32,7 @@
             @if (auth()->user()->isAdmin())
                 <a href="{{ route('admin.tags.index') }}" class="{{ request()->routeIs('admin.tags.*') ? 'active' : '' }}">Tags</a>
                 <a href="{{ route('admin.products.create') }}">Add product</a>
+                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">Users</a>
             @endif
         @endauth
     </div>
