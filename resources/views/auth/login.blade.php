@@ -1,15 +1,17 @@
 @extends('layouts.app')
 @section('title', 'Login')
 @section('content')
-    <h1>Login</h1>
-    <form method="POST" action="{{ route('login') }}" style="max-width:400px;">
+<div class="page-pad narrow-form-wrap">
+    <h1 class="mb-md">Login</h1>
+    <form method="POST" action="{{ route('login') }}" class="panel">
         @csrf
         <label>Email</label>
-        <input type="email" name="email" value="{{ old('email') }}" required>
+        <input type="email" name="email" value="{{ old('email') }}" required autofocus>
         <label>Password</label>
         <input type="password" name="password" required>
-        <button type="submit" class="btn" style="margin-top:1rem;">Login</button>
+        <button type="submit" class="btn-signal submit-btn-full mt-lg">Login</button>
     </form>
-    <p><a href="{{ route('register') }}">No account? Register</a></p>
-    <p style="font-size:0.85rem;color:#6b7280;">Demo admin: admin@dropship.test / password</p>
+    <p class="mt-md"><a href="{{ route('register') }}" class="login-prompt-link">No account? Register</a></p>
+    <p class="text-muted">Demo admin: admin@dropship.test / password</p>
+</div>
 @endsection

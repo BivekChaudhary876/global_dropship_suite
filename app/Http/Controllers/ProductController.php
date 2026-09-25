@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\HasProductFormOptions;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Supplier;
-use App\Models\Tag;
+use App\Support\ImageUploader;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
+    use HasProductFormOptions;
+
     public function index(Request $request)
     {
         $query = Product::query()->with(['category', 'supplier', 'reviews']);
@@ -34,16 +35,18 @@ class ProductController extends Controller
         $products = $query->latest()->paginate(9)->appends($request->query());
         $categories = Category::orderBy('name')->get();
 
-        return view('products.index', compact('products', 'categories'));
+        $stats = [
+            'products' => Product::count(),
+            'suppliers' => \App\Models\Supplier::count(),
+            'avgRating' => round(\App\Models\Review::avg('rating') ?? 0, 1),
+        ];
+
+        return view('products.index', compact('products', 'categories', 'stats'));
     }
 
     public function create()
     {
-        return view('products.create', [
-            'categories' => Category::orderBy('name')->get(),
-            'suppliers'  => Supplier::orderBy('name')->get(),
-            'tags'       => Tag::orderBy('name')->get(),
-        ]);
+        return view('products.create', $this->productFormOptions());
     }
 
     public function store(StoreProductRequest $request)
@@ -52,9 +55,7 @@ class ProductController extends Controller
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
         $tagIds       = $request->input('tags', []);
 
-        if ($request->hasFile('image')) {
-            $data['image_path'] = $request->file('image')->store('products', 'public');
-        }
+        $data['image_path'] = ImageUploader::replace($request->file('image'), null);
 
         $product = Product::create($data);
         $product->tags()->sync($tagIds);
@@ -87,12 +88,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.edit', [
-            'product'    => $product,
-            'categories' => Category::orderBy('name')->get(),
-            'suppliers'  => Supplier::orderBy('name')->get(),
-            'tags'       => Tag::orderBy('name')->get(),
-        ]);
+        return view('products.edit', ['product' => $product] + $this->productFormOptions());
     }
 
     public function update(UpdateProductRequest $request, Product $product)
@@ -100,12 +96,7 @@ class ProductController extends Controller
         $data = $request->validated();
         $tagIds = $request->input('tags', []);
 
-        if ($request->hasFile('image')) {
-            if ($product->image_path) {
-                Storage::disk('public')->delete($product->image_path);
-            }
-            $data['image_path'] = $request->file('image')->store('products', 'public');
-        }
+        $data['image_path'] = ImageUploader::replace($request->file('image'), $product->image_path);
 
         $product->update($data);
         $product->tags()->sync($tagIds);
@@ -115,9 +106,7 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
-        }
+        ImageUploader::delete($product->image_path);
         $product->delete();
 
         return redirect()->route('products.index')->with('status', 'Product deleted.');

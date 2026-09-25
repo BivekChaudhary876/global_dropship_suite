@@ -8,9 +8,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-})->name('home');
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -50,3 +48,5 @@ Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.s
 
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');

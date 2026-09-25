@@ -1,27 +1,34 @@
 @extends('layouts.app')
 @section('title', 'Your Cart')
 @section('content')
-    <h1>Your Cart</h1>
+<div class="page-pad cart-page" data-page="cart">
+    <h1 class="mb-md">Your cart</h1>
+
     @if ($products->isEmpty())
-        <p>Your cart is empty. <a href="{{ route('products.index') }}">Continue shopping</a>.</p>
+        <x-empty-state title="Your cart is empty." :action="route('products.index')" actionLabel="Continue shopping" />
     @else
-        <table style="width:100%;border-collapse:collapse;background:#fff;">
-            <tr><th style="text-align:left;padding:0.5rem;">Product</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+        <div class="panel panel-flush">
             @foreach ($products as $product)
-                <tr>
-                    <td style="padding:0.5rem;">{{ $product->name }}</td>
-                    <td>{{ $product->cart_quantity }}</td>
-                    <td>${{ number_format($product->price * $product->cart_quantity, 2) }}</td>
-                    <td>
+                <div class="cart-row">
+                    <div>
+                        <div class="cart-row-name">{{ $product->name }}</div>
+                        <div class="cart-row-meta">Qty: {{ $product->cart_quantity }} &times; {{ money($product->price) }}</div>
+                    </div>
+                    <div class="cart-row-actions">
+                        <span class="card-price">{{ money($product->price * $product->cart_quantity) }}</span>
                         <form method="POST" action="{{ route('cart.remove', $product) }}">
                             @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer;">Remove</button>
+                            <button type="submit" class="btn-danger">Remove</button>
                         </form>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             @endforeach
-        </table>
-        <p style="margin-top:1rem;"><strong>Total: ${{ number_format($total, 2) }}</strong></p>
-        <a href="{{ route('checkout.form') }}" class="btn">Proceed to Checkout</a>
+        </div>
+
+        <div class="cart-total-row">
+            <span class="total-display">Total: {{ money($total) }}</span>
+        </div>
+        <a href="{{ route('checkout.form') }}" class="btn-signal submit-btn-full">Proceed to checkout</a>
     @endif
+</div>
 @endsection

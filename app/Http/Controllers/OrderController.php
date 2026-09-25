@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderController extends Controller
 {
@@ -85,5 +87,19 @@ class OrderController extends Controller
         $request->session()->forget('cart');
 
         return redirect()->route('orders.show', $order)->with('status', 'Order placed! #'.$order->id);
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $data = $request->validate([
+            'status' => ['required', new Enum(OrderStatus::class)],
+        ]);
+
+        $order->update(['status' => $data['status']]);
+
+        return response()->json([
+            'status' => $order->status->value,
+            'label' => $order->status->label(),
+        ]);
     }
 }
