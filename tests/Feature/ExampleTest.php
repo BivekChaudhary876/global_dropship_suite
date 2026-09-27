@@ -10,14 +10,15 @@ class ExampleTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A simple starter test - confirms the home route correctly redirects
-     * a visitor to the shop page, since "/" itself has no view of its own.
+     * Confirms the home route ("/") loads the shop page directly,
+     * rendering the product listing rather than redirecting to it.
      */
-    public function test_the_home_page_redirects_to_the_shop(): void
+    public function test_the_home_page_loads_the_shop_directly(): void
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/products');
+        $response->assertOk();
+        $response->assertSee('Shop');
     }
 
     /**

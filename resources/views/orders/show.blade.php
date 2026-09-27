@@ -6,6 +6,23 @@
 
     <div class="panel mt-md">
         <h1 class="mb-md">Order #{{ $order->id }}</h1>
+        @if ($order->status === \App\Enums\OrderStatus::Cancelled)
+            <div class="tracker-cancelled">&#10060; This order was cancelled</div>
+        @else
+            <div class="tracker">
+                @foreach (\App\Enums\OrderStatus::trackerLabels() as $i => $label)
+                    <div class="step">
+                        <div class="step-circle {{ $order->status->trackerStep() >= $i ? 'is-active' : 'is-inactive' }}">
+                            {{ $order->status->trackerStep() > $i ? '✓' : $i + 1 }}
+                        </div>
+                        <span class="step-label">{{ $label }}</span>
+                    </div>
+                    @if (!$loop->last)
+                        <div class="step-connector {{ $order->status->trackerStep() > $i ? 'is-active' : 'is-inactive' }}"></div>
+                    @endif
+                @endforeach
+            </div>
+        @endif
 
         @if (auth()->user()->isAdmin())
             <div class="status-select-row">

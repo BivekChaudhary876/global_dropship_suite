@@ -58,4 +58,25 @@ enum OrderStatus: string
             array_map(fn (self $c) => $c->label(), self::cases()),
         );
     }
+
+    /**
+     * Step index (0-3) for the visual tracker on the order page. Cancelled
+     * returns null since it's a terminal state off the normal progression,
+     * not a "step" on the delivery track.
+     */
+    public function trackerStep(): ?int
+    {
+        return match ($this) {
+            self::Pending => 0,
+            self::Paid => 1,
+            self::Shipped => 2,
+            self::Completed => 3,
+            self::Cancelled => null,
+        };
+    }
+
+    public static function trackerLabels(): array
+    {
+        return ['Order received', 'Processing', 'Shipped', 'Delivered'];
+    }
 }

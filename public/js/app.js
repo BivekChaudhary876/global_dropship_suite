@@ -122,7 +122,7 @@ export function initOrderStatusUpdater() {
 
         badgeWrap.innerHTML = '<span class="status-badge status-updating">Updating...</span>';
 
-        fetch(`/admin/orders/${orderId}/status`, {
+        fetch(`/orders/${orderId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
             body: JSON.stringify({ status: newStatus }),

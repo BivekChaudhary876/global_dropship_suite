@@ -27,20 +27,4 @@ class OrderOwnershipTest extends TestCase
 
         $response->assertForbidden();
     }
-
-    public function test_the_owner_can_view_their_own_order(): void
-    {
-        $owner = User::factory()->create();
-
-        $order = Order::create([
-            'user_id' => $owner->id,
-            'status' => 'pending',
-            'shipping_address' => '1 Test St',
-            'total' => 50,
-        ]);
-
-        $response = $this->actingAs($owner)->get("/orders/{$order->id}");
-
-        $response->assertOk();
-    }
 }

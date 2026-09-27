@@ -1128,6 +1128,27 @@ tr:hover td {
     margin-bottom: 1rem;
 }
 
+/* ---------- Order tracker ---------- */
+
+.tracker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.tracker-cancelled {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: rgba(255, 90, 60, 0.08);
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    color: var(--signal);
+    font-weight: 600;
+}
+
 /* ---------- Product detail page ---------- */
 
 .back-link {
@@ -1558,6 +1579,8 @@ tr:hover td {
     background: var(--paper-2);
     color: var(--ink);
 }
+
+
 
 
 /* ---------- Footer ---------- */
