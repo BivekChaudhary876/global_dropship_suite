@@ -8,6 +8,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
@@ -48,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::get('/orders/{order}/pay', [StripeController::class, 'checkout'])->name('stripe.checkout');
+    Route::get('/orders/{order}/pay/success', [StripeController::class, 'success'])->name('stripe.success');
+    Route::get('/orders/{order}/pay/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 });
 
 Route::get('/checkout', [OrderController::class, 'checkoutForm'])->name('checkout.form');

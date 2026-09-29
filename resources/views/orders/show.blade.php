@@ -38,7 +38,19 @@
             <div class="mb-md"><x-status-badge :status="$order->status" /></div>
         @endif
 
-        <p class="order-meta">Shipping address: {{ $order->shipping_address }}</p>
+        <!-- Payment Information -->
+        @if ($order->status === \App\Enums\OrderStatus::Pending)
+            <div class="alert mb-md">
+                This order hasn't been paid yet.
+                <a href="{{ route('stripe.checkout', $order) }}" class="btn-signal" style="margin-top:0.6rem;">
+                    Pay {{ money($order->total) }} with Stripe
+                </a>
+            </div>
+        @elseif ($order->status === \App\Enums\OrderStatus::Paid)
+            <div class="alert mb-md" style="border-color:var(--moss); color:var(--moss);">
+                &#10003; Payment received via Stripe. Thank you!
+            </div>
+        @endif
 
         <table>
             <thead><tr><th>Product</th><th>Qty</th><th>Unit price</th><th>Subtotal</th></tr></thead>

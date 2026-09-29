@@ -14,6 +14,7 @@ class OrderOwnershipTest extends TestCase
     public function test_a_customer_cannot_view_another_customers_order(): void
     {
         $owner = User::factory()->create();
+        /** @var User $intruder */
         $intruder = User::factory()->create();
 
         $order = Order::create([
