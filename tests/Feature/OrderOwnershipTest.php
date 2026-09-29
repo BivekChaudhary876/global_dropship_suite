@@ -28,4 +28,15 @@ class OrderOwnershipTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_the_owner_can_view_their_own_order(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $order = Order::factory()->create(['user_id' => $user->id]);
+        
+        $response = $this->actingAs($user)->get(route('orders.show', $order));
+
+        $response->assertOk();
+    }
 }

@@ -187,5 +187,38 @@ export function initThemeToggle() {
     });
 }
 
+export function initCountUp() {
+    const els = document.querySelectorAll('.count-up');
+    if (!els.length) return;
+
+    const duration = 1200; // ms
+
+    els.forEach((el) => {
+        const target = parseFloat(el.dataset.countTo);
+        if (Number.isNaN(target)) return;
+
+        const decimals = parseInt(el.dataset.countDecimals || '0', 10);
+        const suffix = el.dataset.countSuffix || '';
+        const start = performance.now();
+
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out, fast start, slow finish
+            const value = target * eased;
+
+            el.textContent = value.toLocaleString(undefined, {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals,
+            }) + suffix;
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+        requestAnimationFrame(tick);
+    });
+}
+
 window.addToCartAjax = addToCartAjax;
 window.rippleOn = rippleOn;

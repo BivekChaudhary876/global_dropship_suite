@@ -7,6 +7,8 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
+use App\Models\Supplier;
 use App\Support\ImageUploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,13 +34,13 @@ class ProductController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $products = $query->latest()->paginate(9)->appends($request->query());
+        $products = $query->latest()->paginate(5)->appends($request->query());
         $categories = Category::orderBy('name')->get();
 
         $stats = [
             'products' => Product::count(),
-            'suppliers' => \App\Models\Supplier::count(),
-            'avgRating' => round(\App\Models\Review::avg('rating') ?? 0, 1),
+            'suppliers' => Supplier::count(),
+            'avgRating' => round(Review::avg('rating') ?? 0, 1),
         ];
 
         return view('products.index', compact('products', 'categories', 'stats'));

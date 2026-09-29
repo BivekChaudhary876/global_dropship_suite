@@ -10,12 +10,25 @@
         <p>Every product on Global DropShip is vetted by an actual seller before it reaches your customers — sourced, priced, and ready to sell in minutes.</p>
         <div class="hero-cta">
             <a href="#trending" class="btn-signal">Browse the catalogue</a>
-            <a href="{{ route('register') }}" class="btn-ghost">How it works</a>
+            <a href="#how-it-works" class="btn-ghost">How it works</a>
         </div>
         <div class="hero-stats">
-            <div><strong>{{ number_format($stats['products']) }}+</strong><span>Live products</span></div>
-            <div><strong>{{ $stats['suppliers'] }}</strong><span>Verified suppliers</span></div>
-            <div><strong>{{ $stats['avgRating'] ?: '—' }}</strong><span>Avg. seller rating</span></div>
+            <div>
+                <strong class="count-up" data-count-to="{{ $stats['products'] }}" data-count-suffix="+">0+</strong>
+                <span>Live products</span>
+            </div>
+            <div>
+                <strong class="count-up" data-count-to="{{ $stats['suppliers'] }}">0</strong>
+                <span>Verified suppliers</span>
+            </div>
+            <div>
+                @if ($stats['avgRating'])
+                    <strong class="count-up" data-count-to="{{ $stats['avgRating'] }}" data-count-decimals="1">0.0</strong>
+                @else
+                    <strong>—</strong>
+                @endif
+                <span>Avg. seller rating</span>
+            </div>
         </div>
     </div>
     <div class="hero-art">
@@ -32,6 +45,34 @@
     </div>
 </section>
 @endif
+
+<section id="how-it-works" class="how-it-works">
+    <div class="section-head">
+        <h2>How it works</h2>
+    </div>
+    <div class="how-it-works-grid">
+        <div class="how-step">
+            <span class="how-step-num">1</span>
+            <h3>Browse the catalogue</h3>
+            <p class="text-muted">Search or filter by category to find vetted, ready-to-sell products from our supplier network.</p>
+        </div>
+        <div class="how-step">
+            <span class="how-step-num">2</span>
+            <h3>Add to cart &amp; checkout</h3>
+            <p class="text-muted">Pick your quantities and check out securely — no inventory to hold, no upfront stock to buy.</p>
+        </div>
+        <div class="how-step">
+            <span class="how-step-num">3</span>
+            <h3>We handle fulfilment</h3>
+            <p class="text-muted">Your order goes straight to the supplier, who ships directly — you never touch the product.</p>
+        </div>
+        <div class="how-step">
+            <span class="how-step-num">4</span>
+            <h3>Track your order</h3>
+            <p class="text-muted">Follow it from received to delivered on your order page, every step of the way.</p>
+        </div>
+    </div>
+</section>
 
 <div class="page-pad">
     <div class="cat-rail">
@@ -65,4 +106,11 @@
         <div class="mt-lg">{{ $products->links() }}</div>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script type="module">
+    import { initCountUp } from "{{ asset('js/app.js') }}";
+    initCountUp();
+</script>
 @endsection

@@ -318,6 +318,37 @@ textarea:focus-visible {
     height: auto;
 }
 
+.how-it-works {
+    padding: 3rem 0;
+}
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+.how-step {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+.how-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--signal);
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+.how-step h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+}
+
 /* ---------- Category rail ---------- */
 
 .cat-rail {
@@ -855,6 +886,45 @@ tr:hover td {
     width: 50%;
     overflow: hidden;
 }
+
+/* Laravel's default pagination view has no CSS framework loaded, so its
+   own Tailwind classes (w-5, h-5, etc.) do nothing - this re-styles the
+   existing markup directly instead of swapping in a new view. */
+nav[aria-label="Pagination Navigation"] {
+    margin-top: 2rem;
+}
+
+/* This was the giant arrow - the SVG icon had no size constraint at all */
+nav[aria-label="Pagination Navigation"] svg {
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+}
+
+/* Page number buttons (both real links and the current/disabled ones,
+   which Laravel wraps in an extra inner <span>) */
+nav[aria-label="Pagination Navigation"] a,
+nav[aria-label="Pagination Navigation"] span > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin: 0 0.15rem;
+}
+
+nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+}
+
 
 /* ---------- Toast ---------- */
 
