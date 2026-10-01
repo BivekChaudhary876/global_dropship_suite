@@ -24,7 +24,7 @@
         </div>
 
         <div class="showcase-info">
-            <div class="card-cat">{{ $product->category->name }} &middot; sold by {{ $product->supplier->name }}</div>
+            <div class="card-cat">{{ $product->category->name }}</div>
             <h1 class="detail-title">{{ $product->name }}</h1>
 
             @if ($product->reviews->count())
@@ -46,7 +46,6 @@
 
             <table class="spec-table">
                 <tr><td>Category</td><td>{{ $product->category->name }}</td></tr>
-                <tr><td>Supplier</td><td>{{ $product->supplier->name }}</td></tr>
                 <tr><td>Stock</td><td>{{ $product->stock_quantity }} available</td></tr>
             </table>
 

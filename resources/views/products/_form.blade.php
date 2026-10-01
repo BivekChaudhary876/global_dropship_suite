@@ -15,7 +15,16 @@
     </div>
 </div>
 
+
+
 <div class="form-grid-2">
+    <div>
+        <label>Image</label>
+        <input type="file" name="image" accept="image/*">
+        @if(isset($product) && $product->image_path)
+            <img src="{{ asset('storage/'.$product->image_path) }}" class="image-preview">
+        @endif
+    </div>
     <div>
         <label>Category</label>
         <select name="category_id" required>
@@ -25,21 +34,19 @@
             @endforeach
         </select>
     </div>
-
-<label>Image</label>
-<input type="file" name="image" accept="image/*">
-@if(isset($product) && $product->image_path)
-    <img src="{{ asset('storage/'.$product->image_path) }}" class="image-preview">
-@endif
-
-<label>Tags</label>
-@php $selectedTags = isset($product) ? $product->tags->pluck('id')->toArray() : []; @endphp
-<div class="checkbox-group">
-    @foreach ($tags as $tag)
-        <label class="checkbox-label">
-            <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
-                @checked(in_array($tag->id, old('tags', $selectedTags)))>
-            {{ $tag->name }}
-        </label>
-    @endforeach
 </div>
+<label>Tags</label>
+    @php $selectedTags = isset($product) ? $product->tags->pluck('id')->toArray() : []; @endphp
+    <div class="checkbox-group">
+        @foreach ($tags as $tag)
+            <label class="checkbox-label">
+                <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                    @checked(in_array($tag->id, old('tags', $selectedTags)))>
+                {{ $tag->name }}
+            </label>
+        @endforeach
+    </div>
+
+
+
+
