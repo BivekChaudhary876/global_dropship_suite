@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Category;
-use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -15,7 +14,6 @@ class ProductFactory extends Factory
 
         return [
             'category_id' => Category::factory(),
-            'supplier_id' => Supplier::factory(),
             'name' => ucfirst($name),
             'slug' => Str::slug($name).'-'.Str::random(6),
             'description' => $this->faker->sentence(15),

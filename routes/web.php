@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -38,7 +39,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
     Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
+    Route::get('/tags/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+    Route::patch('/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
     Route::delete('/tags/{tag}', [TagController::class, 'destroy'])->name('tags.destroy');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::patch('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     Route::resource('users', UserController::class);
 });
 
@@ -49,10 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-
-    Route::get('/orders/{order}/pay', [StripeController::class, 'checkout'])->name('stripe.checkout');
-    Route::get('/orders/{order}/pay/success', [StripeController::class, 'success'])->name('stripe.success');
-    Route::get('/orders/{order}/pay/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
 });
 
 Route::get('/checkout', [OrderController::class, 'checkoutForm'])->name('checkout.form');
@@ -62,3 +66,11 @@ Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
 Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+// Stripe payment demo - all three require login, since they act on a
+// specific order that must belong to the logged-in user (or an admin).
+Route::middleware('auth')->group(function () {
+    Route::get('/orders/{order}/pay', [StripeController::class, 'checkout'])->name('stripe.checkout');
+    Route::get('/orders/{order}/pay/success', [StripeController::class, 'success'])->name('stripe.success');
+    Route::get('/orders/{order}/pay/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+});

@@ -17,10 +17,7 @@
                 <strong class="count-up" data-count-to="{{ $stats['products'] }}" data-count-suffix="+">0+</strong>
                 <span>Live products</span>
             </div>
-            <div>
-                <strong class="count-up" data-count-to="{{ $stats['suppliers'] }}">0</strong>
-                <span>Verified suppliers</span>
-            </div>
+            <div><strong>{{ $stats['categories'] }}</strong><span>Categories</span></div>
             <div>
                 @if ($stats['avgRating'])
                     <strong class="count-up" data-count-to="{{ $stats['avgRating'] }}" data-count-decimals="1">0.0</strong>

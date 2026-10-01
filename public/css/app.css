@@ -5,6 +5,8 @@
     --paper-2: #EAE6DC;
     --signal: #5FB85A;
     --signal-dark: #47973F;
+    --danger: #D64545;
+    --danger-dark: #B33333;
     --moss: #2F6E4E;
     --moss-light: #DCEAE1;
     --gold: #C98A2C;
@@ -579,7 +581,8 @@ textarea {
 /* ---------- Buttons ---------- */
 
 .btn-signal,
-.btn-ghost {
+.btn-ghost,
+.btn-danger {
     position: relative;
     overflow: hidden;
     border-radius: 8px;
@@ -613,11 +616,12 @@ textarea {
 .btn-ghost {
     background: transparent;
     color: var(--ink);
-    border: 1px solid var(--line);
+    border: 1px solid var(--ink);
 }
 
 .btn-ghost:hover {
-    border-color: var(--ink);
+    background-color: var(--ink);
+    color: #fff;
     transform: translateY(-2px);
 }
 
@@ -627,23 +631,30 @@ textarea {
 
 .btn-danger {
     background: transparent;
-    color: var(--signal);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-    font-family: inherit;
-    transition: opacity 0.15s;
+    color: var(--danger);
+    border: 1px solid var(--danger);
 }
 
 .btn-danger:hover {
-    opacity: 0.7;
+    background: var(--danger);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-danger:active {
+    transform: translateY(0) scale(0.97);
 }
 
 button:disabled {
     opacity: 0.55;
     cursor: progress;
     transform: none !important;
+}
+
+.row-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
 /* ---------- Pills + badges ---------- */

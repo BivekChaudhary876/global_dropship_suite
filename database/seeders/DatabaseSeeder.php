@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Supplier;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -34,11 +33,6 @@ class DatabaseSeeder extends Seeder
         $categories = collect(['Home & Kitchen', 'Electronics', 'Fitness', 'Pet Supplies'])
             ->map(fn ($name) => Category::create(['name' => $name, 'slug' => Str::slug($name)]));
 
-        $suppliers = collect([
-            ['name' => 'Global Goods Co', 'contact_email' => 'sales@globalgoods.example', 'country' => 'China'],
-            ['name' => 'EuroSource Ltd', 'contact_email' => 'orders@eurosource.example', 'country' => 'Germany'],
-        ])->map(fn ($s) => Supplier::create($s));
-
         $tags = collect(['bestseller', 'new', 'eco-friendly', 'clearance'])
             ->map(fn ($name) => Tag::create(['name' => $name]));
 
@@ -54,7 +48,6 @@ class DatabaseSeeder extends Seeder
         foreach ($sampleProducts as $p) {
             $product = Product::create([
                 'category_id' => $categories->random()->id,
-                'supplier_id' => $suppliers->random()->id,
                 'name' => $p['name'],
                 'slug' => Str::slug($p['name']).'-'.Str::random(6),
                 'description' => 'High quality '.strtolower($p['name']).' sourced directly from our supplier network.',

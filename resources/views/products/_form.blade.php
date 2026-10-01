@@ -25,16 +25,6 @@
             @endforeach
         </select>
     </div>
-    <div>
-        <label>Supplier</label>
-        <select name="supplier_id" required>
-            <option value="">Select...</option>
-            @foreach ($suppliers as $sup)
-                <option value="{{ $sup->id }}" @selected(old('supplier_id', $product->supplier_id ?? '') == $sup->id)>{{ $sup->name }}</option>
-            @endforeach
-        </select>
-    </div>
-</div>
 
 <label>Image</label>
 <input type="file" name="image" accept="image/*">

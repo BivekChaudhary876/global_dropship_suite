@@ -21,7 +21,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::query()->with(['category', 'supplier', 'reviews']);
+        $query = Product::query()->with(['category', 'reviews']);
 
         if ($search = $request->string('q')->trim()->value()) {
             $query->where(function ($q) use ($search) {
@@ -39,7 +39,7 @@ class ProductController extends Controller
 
         $stats = [
             'products' => Product::count(),
-            'suppliers' => Supplier::count(),
+            'categories' => Category::count(),
             'avgRating' => round(Review::avg('rating') ?? 0, 1),
         ];
 
@@ -67,7 +67,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load(['category', 'supplier', 'reviews.user', 'tags']);
+        $product->load(['category', 'reviews.user', 'tags']);
 
         // Third-party API integration: convert the price to USD/EUR using a
         // free public exchange-rate API, cached for an hour so we don't hit

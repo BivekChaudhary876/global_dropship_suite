@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Concerns;
 
 use App\Models\Category;
-use App\Models\Supplier;
 use App\Models\Tag;
 
 /**
@@ -18,7 +17,6 @@ trait HasProductFormOptions
     {
         return [
             'categories' => Category::orderBy('name')->get(),
-            'suppliers' => Supplier::orderBy('name')->get(),
             'tags' => Tag::orderBy('name')->get(),
         ];
     }
