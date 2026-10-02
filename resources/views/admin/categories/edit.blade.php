@@ -10,5 +10,8 @@
         <input type="text" name="name" value="{{ old('name', $category->name) }}" required>
         <button type="submit" class="btn-signal submit-btn-full">Save changes</button>
     </form>
+    @error('name')
+        <p class="text-muted">{{ $message }}</p>
+    @enderror
 </div>
 @endsection

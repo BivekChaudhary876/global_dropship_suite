@@ -25,6 +25,8 @@
     });
 }
 
+
+
 export function initScrollReveal() {
     const items = document.querySelectorAll('.reveal');
     if (!items.length) return;
@@ -39,6 +41,16 @@ export function initScrollReveal() {
     }, { threshold: 0.1 });
 
     items.forEach(el => io.observe(el));
+}
+
+export function showToast(message, duration = 2200) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    document.getElementById('toast-text').textContent = message;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
 }
 
 export function addToCartAjax(url, quantity, buttonEl) {

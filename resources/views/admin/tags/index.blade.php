@@ -18,7 +18,7 @@
                     <td>
                         <div class="row-actions">
                             <a href="{{ route('admin.tags.edit', $tag) }}" class="btn-ghost">Edit</a>
-                            <form method="POST" action="{{ route('admin.tags.destroy', $tag) }}" onsubmit="return confirm('Delete?');">
+                            <form method="POST" action="{{ route('admin.tags.destroy', $tag) }}" onsubmit="return confirm('Delete?');" style="display:inline;">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn-danger">Delete</button>
                             </form>

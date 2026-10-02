@@ -14,18 +14,27 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td><span class="pill" style="{{ $user->isAdmin() ? 'color:var(--signal);background:rgba(255,90,60,0.12);' : '' }}">{{ ucfirst($user->role) }}</span></td>
+                    <td>
+                        @if ($user->isAdmin())
+                            <span class="pill" style="color:var(--signal);background:rgba(255,90,60,0.12);">{{ ucfirst($user->role) }}</span>
+                        @else
+                            <span class="pill">{{ ucfirst($user->role) }}</span>
+                        @endif
+                    </td>
                     <td>{{ $user->orders_count }}</td>
                     <td>{{ $user->reviews_count }}</td>
                     <td>
-                        <a href="{{ route('admin.users.show', $user) }}" class="btn-ghost" style="padding:0.4rem 0.9rem;">View</a>
-                        <a href="{{ route('admin.users.edit', $user) }}" class="btn-ghost" style="padding:0.4rem 0.9rem;">Edit</a>
-                        @if ($user->id !== auth()->id())
-                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user? This cannot be undone.');" style="display:inline;">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn-danger">Delete</button>
-                            </form>
-                        @endif
+                        <div class="row-actions">
+                            <a href="{{ route('admin.users.show', $user) }}" class="btn-ghost">View</a>
+                            <a href="{{ route('admin.users.edit', $user) }}" class="btn-ghost">Edit</a>
+                            @if ($user->id !== auth()->id())
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user? This cannot be undone.');"
+                                    style="display:inline;">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn-danger">Delete</button>
+                                </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
             @endforeach

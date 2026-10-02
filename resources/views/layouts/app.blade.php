@@ -89,14 +89,19 @@
 
 <footer>Global DropShip Suite</footer>
 
-<div class="toast" id="toast"><span class="dot"></span><span id="toast-text">Added to cart</span></div>
+<div class="toast" id="toast" data-flash-message="{{ session('status') }}"><span class="dot"></span><span id="toast-text">Added to cart</span></div>
 
 <script type="module">
-    import { initNavProgress, initScrollReveal, initAccountDropdown, initThemeToggle } from "{{ asset('js/app.js') }}";
+    import { initNavProgress, initScrollReveal, initAccountDropdown, initThemeToggle, showToast } from "{{ asset('js/app.js') }}";
     initNavProgress();
     initScrollReveal();
     initAccountDropdown();
     initThemeToggle();
+
+    const flashMessage = document.getElementById('toast').dataset.flashMessage;
+    if (flashMessage) {
+        showToast(flashMessage);
+    }
 </script>
 @yield('scripts')
 </body>

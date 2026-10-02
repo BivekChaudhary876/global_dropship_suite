@@ -108,6 +108,10 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        if ($product->orderItems()->exists()) {
+            return back()->with('status', 'Cannot delete a product that has already been ordered — it needs to stay so past orders keep their history.');
+        }
+
         ImageUploader::delete($product->image_path);
         $product->delete();
 
