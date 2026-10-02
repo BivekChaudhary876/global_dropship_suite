@@ -5,19 +5,21 @@
     <a href="{{ route('products.index') }}" class="back-link">&larr; Back to shop</a>
 
     <div class="showcase-grid">
-        <div class="thumb-rail">
-            <div class="thumb on" id="pd-thumb-main">
-                @if ($product->image_path)
-                    <img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}" style="width:100%;height:100%;object-fit:cover;">
-                @else
+        <div class="thumb-rail" id="pd-thumb-rail">
+            @forelse ($product->images as $i => $image)
+                <div class="thumb {{ $i === 0 ? 'on' : '' }}" data-full-src="{{ asset('storage/'.$image->path) }}">
+                    <img src="{{ asset('storage/'.$image->path) }}" alt="{{ $product->name }}" style="width:100%;height:100%;object-fit:cover;">
+                </div>
+            @empty
+                <div class="thumb on">
                     <div class="card-art-placeholder">{{ initials($product->name) }}</div>
-                @endif
-            </div>
+                </div>
+            @endforelse
         </div>
 
         <div id="pd-zoom-wrap" class="detail-image" style="view-transition-name: product-photo-{{ $product->id }};">
-            @if ($product->image_path)
-                <img id="pd-zoom-img" src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->name }}">
+            @if ($product->images->isNotEmpty())
+                <img id="pd-zoom-img" src="{{ asset('storage/'.$product->images->first()->path) }}" alt="{{ $product->name }}">
             @else
                 <div class="card-art-placeholder detail-placeholder">{{ initials($product->name) }}</div>
             @endif
@@ -158,7 +160,8 @@
 
 @section('scripts')
 <script type="module">
-    import { initZoomLens } from "{{ asset('js/app.js') }}";
+    import { initZoomLens, initProductGallery } from "{{ asset('js/app.js') }}";
     initZoomLens();
+    initProductGallery();
 </script>
 @endsection

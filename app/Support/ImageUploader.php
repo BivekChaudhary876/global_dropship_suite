@@ -5,19 +5,10 @@ namespace App\Support;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-/**
- * Previously, "store the new file, and delete the old one if replacing"
- * was written out three separate times in ProductController (store,
- * update, destroy), each slightly differently. This class is the one
- * place that logic lives now.
- */
+
 class ImageUploader
 {
-    /**
-     * Store a freshly uploaded file, deleting $existingPath first if given.
-     * Returns the new stored path, or the untouched $existingPath if no
-     * new file was uploaded.
-     */
+    /** Store a freshly uploaded file, replacing an existing one if there is one. */
     public static function replace(?UploadedFile $file, ?string $existingPath, string $directory = 'products'): ?string
     {
         if (! $file) {
@@ -35,6 +26,30 @@ class ImageUploader
     {
         if ($path) {
             Storage::disk('public')->delete($path);
+        }
+    }
+
+    /**
+     * Store several freshly uploaded files at once (the multi-image
+     * product gallery). Returns the stored paths in the same order the
+     * files were uploaded in.
+     *
+     * @param  UploadedFile[]  $files
+     * @return string[]
+     */
+    public static function storeMany(array $files, string $directory = 'products'): array
+    {
+        return array_map(
+            fn (UploadedFile $file) => $file->store($directory, 'public'),
+            $files,
+        );
+    }
+
+    /** Delete several stored paths at once. */
+    public static function deleteMany(iterable $paths): void
+    {
+        foreach ($paths as $path) {
+            static::delete($path);
         }
     }
 

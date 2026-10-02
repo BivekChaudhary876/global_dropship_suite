@@ -1000,6 +1000,36 @@ nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
     margin-top: 0.6rem;
 }
 
+.field-hint {
+    font-size: 0.82rem;
+    color: var(--ink-3, #6b7280);
+    margin: 0.3rem 0 0;
+}
+
+.image-gallery-edit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 0.6rem;
+}
+
+.image-gallery-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: normal;
+    margin: 0;
+}
+
+.image-gallery-item .image-preview {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    margin-top: 0;
+    border: 1px solid var(--line);
+}
+
 .checkbox-group {
     display: flex;
     flex-wrap: wrap;
@@ -1208,6 +1238,8 @@ nav[aria-label="Pagination Navigation"] span[aria-current="page"] > span {
 .section-title {
     margin-bottom: 1rem;
 }
+
+
 
 /* ---------- Order tracker ---------- */
 

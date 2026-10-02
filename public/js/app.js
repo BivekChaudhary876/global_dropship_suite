@@ -113,6 +113,21 @@ export function initZoomLens() {
     wrap.addEventListener('mouseleave', () => { img.style.transform = 'scale(1)'; });
 }
 
+export function initProductGallery() {
+    const rail = document.getElementById('pd-thumb-rail');
+    const mainImg = document.getElementById('pd-zoom-img');
+    if (!rail || !mainImg) return;
+
+    rail.addEventListener('click', e => {
+        const thumb = e.target.closest('.thumb');
+        if (!thumb || !thumb.dataset.fullSrc) return;
+
+        rail.querySelectorAll('.thumb').forEach(t => t.classList.remove('on'));
+        thumb.classList.add('on');
+        mainImg.src = thumb.dataset.fullSrc;
+    });
+}
+
 export function initOrderStatusUpdater() {
     const select = document.getElementById('order-status-select');
     if (!select) return;

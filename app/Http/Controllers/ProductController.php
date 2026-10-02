@@ -7,8 +7,6 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Review;
-use App\Models\Supplier;
 use App\Support\ImageUploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -21,12 +19,18 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::query()->with(['category', 'reviews']);
+        $query = Product::query()->with(['category', 'reviews', 'tags']);
 
         if ($search = $request->string('q')->trim()->value()) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($category) use ($search) {
+                        $category->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('tags', function ($tag) use ($search) {
+                        $tag->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -34,13 +38,13 @@ class ProductController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $products = $query->latest()->paginate(5)->appends($request->query());
+        $products = $query->latest()->paginate(9)->appends($request->query());
         $categories = Category::orderBy('name')->get();
 
         $stats = [
             'products' => Product::count(),
             'categories' => Category::count(),
-            'avgRating' => round(Review::avg('rating') ?? 0, 1),
+            'avgRating' => round(\App\Models\Review::avg('rating') ?? 0, 1),
         ];
 
         return view('products.index', compact('products', 'categories', 'stats'));
@@ -57,17 +61,22 @@ class ProductController extends Controller
         $data['slug'] = Str::slug($data['name']).'-'.Str::random(6);
         $tagIds       = $request->input('tags', []);
 
-        $data['image_path'] = ImageUploader::replace($request->file('image'), null);
+        $uploadedPaths       = ImageUploader::storeMany($request->file('images', []));
+        $data['image_path']  = $uploadedPaths[0] ?? null;
 
         $product = Product::create($data);
         $product->tags()->sync($tagIds);
+
+        foreach ($uploadedPaths as $path) {
+            $product->images()->create(['path' => $path]);
+        }
 
         return redirect()->route('products.show', $product)->with('status', 'Product created.');
     }
 
     public function show(Product $product)
     {
-        $product->load(['category', 'reviews.user', 'tags']);
+        $product->load(['category', 'reviews.user', 'tags', 'images']);
 
         // Third-party API integration: convert the price to USD/EUR using a
         // free public exchange-rate API, cached for an hour so we don't hit
@@ -98,7 +107,33 @@ class ProductController extends Controller
         $data = $request->validated();
         $tagIds = $request->input('tags', []);
 
-        $data['image_path'] = ImageUploader::replace($request->file('image'), $product->image_path);
+        // Remove any existing images the admin ticked for removal, then add
+        // any newly-uploaded ones - both are optional, independent of each
+        // other, so an edit can do neither, either, or both at once.
+        $removeIds = $request->input('remove_images', []);
+        $newFiles = $request->file('images', []);
+        $galleryChanged = (bool) $removeIds || (bool) $newFiles;
+
+        if ($removeIds) {
+            $product->images()->whereIn('id', $removeIds)->get()->each(function ($image) {
+                ImageUploader::delete($image->path);
+                $image->delete();
+            });
+        }
+
+        foreach (ImageUploader::storeMany($newFiles) as $path) {
+            $product->images()->create(['path' => $path]);
+        }
+
+        // image_path is the "cover" photo used everywhere that only shows
+        // one image (catalogue grid, product card) - keep it pointed at
+        // whichever image is now first in the gallery. Only touch it when
+        // the gallery actually changed, so a product whose image_path
+        // predates this feature (and so has no product_images row yet)
+        // doesn't get wiped out by an edit that didn't touch its photos.
+        if ($galleryChanged) {
+            $data['image_path'] = $product->images()->oldest('id')->value('path');
+        }
 
         $product->update($data);
         $product->tags()->sync($tagIds);
@@ -112,7 +147,13 @@ class ProductController extends Controller
             return back()->with('status', 'Cannot delete a product that has already been ordered — it needs to stay so past orders keep their history.');
         }
 
-        ImageUploader::delete($product->image_path);
+        // images->pluck('path') normally already includes image_path (it's
+        // kept pointed at the first gallery row), but a product untouched
+        // since before the gallery feature existed may still only have the
+        // legacy image_path with no matching product_images row - merge
+        // both so nothing is left behind on disk either way.
+        $paths = $product->images->pluck('path')->push($product->image_path)->filter()->unique();
+        ImageUploader::deleteMany($paths);
         $product->delete();
 
         return redirect()->route('products.index')->with('status', 'Product deleted.');
