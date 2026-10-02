@@ -79,9 +79,14 @@
         @endforeach
     </div>
 
-    <form method="GET" action="{{ route('products.index') }}" style="display:flex; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+    <form method="GET" action="{{ route('products.index') }}" style="display:flex; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap; align-items:center;">
         <input type="hidden" name="category_id" value="{{ request('category_id') }}">
         <input type="text" name="q" placeholder="Search products..." value="{{ request('q') }}" style="max-width:280px; margin-top:0;">
+        <select name="sort" onchange="this.form.submit()" style="margin-top:0;">
+            @foreach (\App\Http\Controllers\ProductController::SORT_OPTIONS as $value => $label)
+                <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>
+            @endforeach
+        </select>
         <button type="submit" class="btn-ghost">Filter</button>
     </form>
 

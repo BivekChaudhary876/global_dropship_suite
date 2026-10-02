@@ -17,9 +17,19 @@ class ProductController extends Controller
 {
     use HasProductFormOptions;
 
+    public const SORT_OPTIONS = [
+        'newest' => 'Newest',
+        'price_asc' => 'Price: Low to High',
+        'price_desc' => 'Price: High to Low',
+        'name_asc' => 'Name: A to Z',
+        'name_desc' => 'Name: Z to A',
+        'rating' => 'Top Rated',
+    ];
+
     public function index(Request $request)
     {
-        $query = Product::query()->with(['category', 'reviews', 'tags']);
+        $query = Product::query()->with(['category', 'reviews', 'tags'])
+            ->withAvg('reviews', 'rating');
 
         if ($search = $request->string('q')->trim()->value()) {
             $query->where(function ($q) use ($search) {
@@ -37,8 +47,25 @@ class ProductController extends Controller
         if ($categoryId = $request->integer('category_id')) {
             $query->where('category_id', $categoryId);
         }
+        
+        $sort = $request->string('sort')->value();
+        if (! array_key_exists($sort, self::SORT_OPTIONS)) {
+            $sort = 'newest';
+        }
 
-        $products = $query->latest()->paginate(9)->appends($request->query());
+        match ($sort) {
+            'price_asc' => $query->orderBy('price'),
+            'price_desc' => $query->orderByDesc('price'),
+            'name_asc' => $query->orderBy('name'),
+            'name_desc' => $query->orderByDesc('name'),
+            // Products with no reviews yet have a null average - sort those
+            // after every rated product instead of letting the database
+            // put nulls first, which would bury every rated item at the bottom.
+            'rating' => $query->orderByRaw('reviews_avg_rating is null')->orderByDesc('reviews_avg_rating'),
+            default => $query->latest(),
+        };
+
+        $products = $query->paginate(9)->appends($request->query());
         $categories = Category::orderBy('name')->get();
 
         $stats = [
@@ -47,7 +74,7 @@ class ProductController extends Controller
             'avgRating' => round(\App\Models\Review::avg('rating') ?? 0, 1),
         ];
 
-        return view('products.index', compact('products', 'categories', 'stats'));
+        return view('products.index', compact('products', 'categories', 'stats', 'sort'));
     }
 
     public function create()

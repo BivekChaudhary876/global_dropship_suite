@@ -87,7 +87,7 @@
 
 @yield('content')
 
-<footer>Global DropShip Suite</footer>
+<footer>&copy; {{ now()->year }} Global DropShip Suite</footer>
 
 <div class="toast" id="toast" data-flash-message="{{ session('status') }}"><span class="dot"></span><span id="toast-text">Added to cart</span></div>
 
